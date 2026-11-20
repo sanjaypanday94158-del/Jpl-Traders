@@ -11,6 +11,7 @@ export function Catalog() {
   const [sort, setSort] = useState("default");
   const [query, setQuery] = useState("");
   const [visibleCount, setVisibleCount] = useState(10);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   const availableBrands = useMemo(
@@ -85,8 +86,8 @@ export function Catalog() {
 
   return (
     <main className="bg-[#f7f8fa]">
-      <div className="shell py-8 md:py-10">
-        <div className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-slate-200 pb-5">
+      <div className="shell py-6 sm:py-8 md:py-10">
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-slate-200 pb-4 sm:mb-6 sm:gap-4 sm:pb-5">
           <div>
             <h1 className="text-[28px] font-extrabold leading-tight tracking-[-0.04em] text-[#082653] sm:text-3xl">
               Shop <span className="text-[#0757c8]">Products</span>
@@ -107,9 +108,26 @@ export function Catalog() {
         </div>
 
         <div className="grid items-start gap-5 lg:grid-cols-[232px_minmax(0,1fr)] lg:gap-6">
+          <button
+            type="button"
+            aria-expanded={showMobileFilters}
+            aria-controls="product-filters"
+            onClick={() => setShowMobileFilters((visible) => !visible)}
+            className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-[#082653] shadow-[0_2px_8px_rgba(15,23,42,0.04)] lg:hidden"
+          >
+            <span className="flex items-center gap-2">
+              <SlidersHorizontal size={16} className="text-[#0757c8]" />
+              Filter products
+            </span>
+            <span className="text-xs font-semibold text-slate-500">
+              {showMobileFilters ? "Close" : "Show"}
+            </span>
+          </button>
+
           <aside
+            id="product-filters"
             aria-label="Product filters"
-            className="h-fit rounded-xl border border-slate-200 bg-white p-4 shadow-[0_2px_8px_rgba(15,23,42,0.04)]"
+            className={`${showMobileFilters ? "block" : "hidden"} h-fit rounded-xl border border-slate-200 bg-white p-4 shadow-[0_2px_8px_rgba(15,23,42,0.04)] lg:block`}
           >
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h2 className="flex items-center gap-2 text-sm font-bold text-[#082653]">
@@ -199,8 +217,8 @@ export function Catalog() {
           </aside>
 
           <section aria-label="Products">
-            <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-slate-200 bg-white p-2.5 shadow-[0_2px_8px_rgba(15,23,42,0.03)]">
-              <div className="flex min-w-[220px] flex-1 items-center gap-2.5 px-2">
+            <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-slate-200 bg-white p-2.5 shadow-[0_2px_8px_rgba(15,23,42,0.03)] sm:gap-3">
+              <div className="flex min-w-0 flex-1 basis-full items-center gap-2.5 px-2 sm:basis-auto">
                 <Search size={17} className="shrink-0 text-slate-400" />
                 <input
                   value={query}
