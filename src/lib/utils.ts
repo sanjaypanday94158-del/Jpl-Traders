@@ -1,0 +1,1 @@
+import {clsx,type ClassValue} from "clsx";import {twMerge} from "tailwind-merge";export function cn(...v:ClassValue[]){return twMerge(clsx(v))}export function money(v:number){return new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(v)}
