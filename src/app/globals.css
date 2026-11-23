@@ -24,3 +24,4 @@ img[src="/banners/institutional.jpg"]:hover{transform:rotate(0) translateY(-4px)
 @media(prefers-reduced-motion:reduce){.promo-marquee-track{animation:none}}
 html{scroll-padding-bottom:5rem}
 @media(max-width:767px){html,body{overflow-x:clip}.input{font-size:16px}button,a,select{touch-action:manipulation}}
+@keyframes floating-action-in{from{opacity:0;transform:translateX(14px) scale(.85)}to{opacity:1;transform:translateX(0) scale(1)}}
