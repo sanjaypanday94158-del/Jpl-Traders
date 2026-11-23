@@ -8,13 +8,11 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import {
   Clock,
-  Home,
   MapPin,
-  MessageCircle,
-  Package,
+  Menu,
   Search,
   ShoppingCart,
-  Wrench,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -27,16 +25,9 @@ const navigation = [
   ["Contact Us", "/contact"],
 ];
 
-const mobileNavigation = [
-  { title: "Home", href: "/", icon: Home },
-  { title: "Shop", href: "/products", icon: Package },
-  { title: "Services", href: "/services", icon: Wrench },
-  { title: "Cart", href: "/cart", icon: ShoppingCart },
-  { title: "Contact", href: "/contact", icon: MessageCircle },
-];
-
 export function SiteHeader() {
   const [now, setNow] = useState<Date | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -45,6 +36,26 @@ export function SiteHeader() {
     const intervalId = window.setInterval(updateTime, 1_000);
     return () => window.clearInterval(intervalId);
   }, []);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [menuOpen]);
 
   return (
     <>
@@ -183,43 +194,79 @@ export function SiteHeader() {
           </nav>
         </header>
       </div>
-      <nav
-        aria-label="Mobile navigation"
-        className="fixed inset-x-0 bottom-0 z-[60] border-t border-slate-200/90 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_rgba(8,38,83,0.1)] backdrop-blur-xl md:hidden"
-      >
-        <div className="mx-auto grid max-w-lg grid-cols-5">
-          {mobileNavigation.map(({ title, href, icon: Icon }) => {
-            const isActive =
-              pathname === href || (href !== "/" && pathname.startsWith(href));
-            return (
-              <Link
-                key={href}
-                href={href}
-                aria-current={isActive ? "page" : undefined}
-                className={`relative flex min-h-14 flex-col items-center justify-center gap-1 px-1 py-2 text-[10px] font-bold transition-colors ${
-                  isActive ? "text-[#0757c8]" : "text-slate-500"
-                }`}
-              >
-                {isActive && (
-                  <span
-                    aria-hidden="true"
-                    className="absolute inset-x-3 top-0 h-0.5 rounded-full bg-[#ff7915]"
-                  />
-                )}
-                <Icon size={19} strokeWidth={isActive ? 2.4 : 1.9} />
-                <span>{title}</span>
-              </Link>
-            );
-          })}
+      <header className="sticky top-0 z-[70] border-b border-slate-200 bg-white/95 shadow-[0_4px_16px_rgba(8,38,83,0.08)] backdrop-blur-xl md:hidden">
+        <div className="flex h-16 items-center justify-between px-3 sm:px-4">
+          <Link
+            href="/"
+            className="flex min-w-0 items-center"
+            aria-label="JPL Traders home"
+          >
+            <Image
+              src="/jpl-traders-logo.png"
+              alt="JPL Traders"
+              width={190}
+              height={64}
+              priority
+              className="h-auto w-[132px]"
+            />
+          </Link>
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-blue-100 bg-white text-[#08285a] shadow-sm"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+          >
+            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
-      </nav>
+      </header>
+
+      {menuOpen && (
+        <div className="fixed inset-0 z-[65] md:hidden">
+          <button
+            type="button"
+            className="absolute inset-0 bg-[#061e45]/45 backdrop-blur-[2px]"
+            aria-label="Close menu"
+            onClick={() => setMenuOpen(false)}
+          />
+          <nav
+            id="mobile-menu"
+            aria-label="Mobile navigation"
+            className="absolute right-0 top-0 h-full w-[min(86vw,340px)] bg-white pt-[calc(env(safe-area-inset-top)+4.75rem)] shadow-[-12px_0_32px_rgba(8,38,83,0.18)]"
+          >
+            <div className="border-t border-slate-100 px-3 py-4">
+              {navigation.map(([title, href]) => {
+                const isActive =
+                  pathname === href ||
+                  (href !== "/" && pathname.startsWith(href));
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    aria-current={isActive ? "page" : undefined}
+                    className={`mb-1 flex min-h-12 items-center rounded-xl px-4 text-sm font-extrabold ${
+                      isActive
+                        ? "bg-[#0757c8] text-white"
+                        : "text-[#08285a] hover:bg-blue-50"
+                    }`}
+                  >
+                    {title}
+                  </Link>
+                );
+              })}
+            </div>
+          </nav>
+        </div>
+      )}
     </>
   );
 }
 
 export function SiteFooter() {
   return (
-    <footer className="mt-12 bg-[#061e45] pb-[calc(4.5rem+env(safe-area-inset-bottom))] text-blue-100 md:mt-16 md:pb-0">
+    <footer className="mt-12 bg-[#061e45] text-blue-100 md:mt-16">
       <div className="shell grid grid-cols-2 gap-x-5 gap-y-8 py-9 sm:gap-9 sm:py-12 md:grid-cols-4">
         <div className="col-span-2 md:col-span-1">
           <Link
