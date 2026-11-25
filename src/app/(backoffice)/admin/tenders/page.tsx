@@ -1,1 +1,0 @@
-import{AdminManager}from"@/components/admin-manager";export default function Page(){return <AdminManager kind="tenders"/>}
